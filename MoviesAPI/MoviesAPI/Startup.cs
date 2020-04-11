@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,11 +30,36 @@ namespace MoviesAPI
         {
             services.AddSingleton<IGenreRepository, InMemoryRepository>();
             services.AddControllers();
+
+            services.AddResponseCaching();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            // example of intercepting the request and logging the response
+            app.Use(async (context, next) =>
+            {
+                using (var swapStream = new MemoryStream())
+                {
+                    var originalResponseBody = context.Response.Body;
+                    context.Response.Body = swapStream;
+
+                    await next.Invoke();
+
+                    swapStream.Seek(0, SeekOrigin.Begin);
+                    string responseBody = new StreamReader(swapStream).ReadToEnd();
+                    swapStream.Seek(0, SeekOrigin.Begin);
+
+                    await swapStream.CopyToAsync(originalResponseBody);
+                    context.Response.Body = originalResponseBody;
+
+                    logger.LogInformation(responseBody);
+                }
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -42,6 +69,10 @@ namespace MoviesAPI
 
             app.UseRouting();
 
+            // intercept the Http request and return from the cache whenever we have to
+            app.UseResponseCaching();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
