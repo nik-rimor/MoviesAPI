@@ -7,30 +7,13 @@ using System.Threading.Tasks;
 
 namespace MoviesAPI.Entities
 {
-    public class Genre : IValidatableObject  //use for class level (model) velidation
+    public class Genre
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "The field with name {0} is required.")]
-        [StringLength(100)]
+        [Required]
+        [StringLength(40)]
         //[FirstLetterUppercase] this would be used for attrbute level validation
         public string Name { get; set; }
-
-
-        // class level (model) validation
-        // these validations run only after the attribute level validations
-        // so they will not fire if an error has caused invalid state at the attrbute check
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            if (!string.IsNullOrEmpty(Name))
-            {
-                var firstLetter = Name[0].ToString();
-
-                if(firstLetter != firstLetter.ToUpper())
-                {
-                    yield return new ValidationResult("First letter should be uppercase.",
-                        new string[] { nameof(Name) }); 
-                }
-            }
-        }
+        
     }
 }

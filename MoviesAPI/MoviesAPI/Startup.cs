@@ -35,38 +35,11 @@ namespace MoviesAPI
                 options.Filters.Add(typeof(MyExceptionFilter));
             }).AddXmlDataContractSerializerFormatters();
 
-            services.AddResponseCaching();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-
-            services.AddTransient<MyActionFilter>();
-            services.AddTransient<Microsoft.Extensions.Hosting.IHostedService, WriteToFileHostedService>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // example of intercepting the request and logging the response
-            app.Use(async (context, next) =>
-            {
-                using (var swapStream = new MemoryStream())
-                {
-                    var originalResponseBody = context.Response.Body;
-                    context.Response.Body = swapStream;
-
-                    await next.Invoke();
-
-                    swapStream.Seek(0, SeekOrigin.Begin);
-                    string responseBody = new StreamReader(swapStream).ReadToEnd();
-                    swapStream.Seek(0, SeekOrigin.Begin);
-
-                    await swapStream.CopyToAsync(originalResponseBody);
-                    context.Response.Body = originalResponseBody;
-
-                    logger.LogInformation(responseBody);
-                }
-            });
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -75,9 +48,6 @@ namespace MoviesAPI
             //app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            // intercept the Http request and return from the cache whenever we have to
-            app.UseResponseCaching();
 
             app.UseAuthentication();
             app.UseAuthorization();

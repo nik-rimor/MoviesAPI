@@ -26,24 +26,17 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpGet]
-        //[ResponseCache(Duration = 60)]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [ServiceFilter(typeof(MyActionFilter))]
         public async Task<ActionResult<List<Genre>>> Get()
         {
-            _logger.LogInformation("Getting all the genres");
             return await _genreRepo.GetAllGenres();
         }
 
         [HttpGet("{Id:int}", Name = "GetGenreById")]
-        [ServiceFilter(typeof(MyActionFilter))]
         public ActionResult<Genre> Get(int Id)
         {
-            _logger.LogDebug("GetById method is executing ...");
             var genre =  _genreRepo.GetGenreById(Id);
             if (genre == null)
             {
-                _logger.LogWarning($"Genre with Id {Id} not found");
                 return NotFound();
             }
 
