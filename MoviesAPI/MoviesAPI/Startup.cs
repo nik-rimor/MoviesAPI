@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MoviesAPI.Filters;
 using MoviesAPI.Services;
 
 namespace MoviesAPI
@@ -29,10 +30,16 @@ namespace MoviesAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IGenreRepository, InMemoryRepository>();
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(MyExceptionFilter));
+            }).AddXmlDataContractSerializerFormatters();
 
             services.AddResponseCaching();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+
+            services.AddTransient<MyActionFilter>();
+            services.AddTransient<Microsoft.Extensions.Hosting.IHostedService, WriteToFileHostedService>();
 
         }
 
