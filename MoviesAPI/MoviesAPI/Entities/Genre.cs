@@ -13,8 +13,10 @@ namespace MoviesAPI.Entities
 
         [Required]
         [StringLength(40)]
-        //[FirstLetterUppercase] this would be used for attrbute level validation
+        [FirstLetterUppercase]
         public string Name { get; set; }
-        
+        // navigation property
+        public List<MoviesGenres> MoviesGenres { get; set; }
+
     }
 }

@@ -68,11 +68,25 @@ namespace MoviesAPI.Controllers
                 }
             }
 
+            AnnotateActorsOrder(movie);
+
             context.Add(movie);
             await context.SaveChangesAsync();
 
             var movieDTO = mapper.Map<MovieDTO>(movie);
             return new CreatedAtRouteResult("GetMovieById", new { movieDTO.Id }, movieDTO);
+        }
+
+
+        private static void AnnotateActorsOrder(Movie movie)
+        {
+            if (movie.MoviesActors != null)
+            {
+                for (int i=0; i < movie.MoviesActors.Count; i++)
+                {
+                    movie.MoviesActors[i].Order = i;
+                }
+            }
         }
 
         [HttpPut("{Id:int}")]
