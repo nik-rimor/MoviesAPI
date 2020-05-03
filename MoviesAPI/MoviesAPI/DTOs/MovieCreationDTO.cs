@@ -3,11 +3,11 @@ using MoviesAPI.Validations;
 
 namespace MoviesAPI.DTOs
 {
-    public class PersonCreationDTO : PersonPatchDTO
+    public class MovieCreationDTO : MoviePatchDTO
     {
 
-        [FileSizeValidator(2)]
+        [FileSizeValidator(4)]
         [ContentTypeValidator(ContentTypeGroup.Image)]
-        public IFormFile Picture { get; set; }
+        public IFormFile Poster { get; set; }
     }
 }

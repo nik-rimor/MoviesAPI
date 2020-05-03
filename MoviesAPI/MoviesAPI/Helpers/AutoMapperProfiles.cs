@@ -20,6 +20,16 @@ namespace MoviesAPI.Helpers
             CreateMap<Person, PersonDTO>().ReverseMap();
             CreateMap<PersonCreationDTO, Person>()
                 .ForMember(x => x.Picture, options => options.Ignore());
+
+            CreateMap<Person, PersonPatchDTO>().ReverseMap();
+
+            // Movie Mappings
+            CreateMap<Movie, MovieDTO>().ReverseMap();
+            CreateMap<MovieCreationDTO, Movie>()
+                .ForMember(m => m.Poster, options => options.Ignore());
+
+            CreateMap<Movie, MoviePatchDTO>().ReverseMap();
+            
         }
     }
 }
