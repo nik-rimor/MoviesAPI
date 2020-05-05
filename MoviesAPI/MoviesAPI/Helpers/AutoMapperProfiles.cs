@@ -29,6 +29,10 @@ namespace MoviesAPI.Helpers
                 .ForMember(m => m.Poster, options => options.Ignore())
                 .ForMember(m => m.MoviesGenres, options => options.MapFrom(MapMoviesGenres))
                 .ForMember(m => m.MoviesActors, options => options.MapFrom(MapMoviesActors));
+            
+            CreateMap<Movie, MovieDetailsDTO>()
+                .ForMember(m => m.Genres, options => options.MapFrom(MapMoviesGenres))
+                .ForMember(m => m.Actors, options => options.MapFrom(MapMoviesActors));
 
             CreateMap<Movie, MoviePatchDTO>().ReverseMap();            
         }
@@ -49,6 +53,26 @@ namespace MoviesAPI.Helpers
             foreach (var actor in movieCreationDTO.Actors)
             {
                 result.Add(new MoviesActors() { PersonId = actor.PersonId, Character = actor.Character });
+            }
+            return result;
+        }
+
+        private List<GenreDTO> MapMoviesGenres(Movie movie, MovieDetailsDTO movieDetailsDTO)
+        {
+            var result = new List<GenreDTO>();
+            foreach (var moviegenre in movie.MoviesGenres)
+            {
+                result.Add(new GenreDTO() { Id = moviegenre.GenreId, Name = moviegenre.Genre.Name });
+            }
+            return result;
+        }
+
+        private List<ActorDTO> MapMoviesActors(Movie movie, MovieDetailsDTO movieDetailsDTO)
+        {
+            var result = new List<ActorDTO>();
+            foreach (var actor in movie.MoviesActors)
+            {
+                result.Add(new ActorDTO() { PersonId = actor.PersonId, Character = actor.Character, PersonName = actor.Person.Name });
             }
             return result;
         }
