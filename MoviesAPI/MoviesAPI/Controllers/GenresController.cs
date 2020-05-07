@@ -33,6 +33,7 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<List<GenreDTO>>> Get()
         {
             // return await _genreRepo.GetAllGenres();
@@ -55,6 +56,7 @@ namespace MoviesAPI.Controllers
         }
         
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         public async Task<ActionResult> Post([FromBody] GenreCreationDTO genreCreation)
         {
             // map to Genre for database creation
