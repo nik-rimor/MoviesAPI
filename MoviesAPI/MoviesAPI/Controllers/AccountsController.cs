@@ -98,7 +98,7 @@ namespace MoviesAPI.Controllers
                 new Claim(ClaimTypes.Email, userInfo.EmailAddress),
                 new Claim("my key", "whatever value I want")
             };
-
+            
             // Getting the claims for the IdentityUser from DB
             var identityUser = await userManager.FindByEmailAsync(userInfo.EmailAddress);
             var claimsDB = await userManager.GetClaimsAsync(identityUser);

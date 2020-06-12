@@ -37,6 +37,12 @@ namespace MoviesAPI
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAPIRequestIO",
+                    builder => builder.WithOrigins("http://apirequest.io").WithMethods("GET", "POST").AllowAnyHeader());
+            });
+
             services.AddAutoMapper(typeof(Startup));
 
             services.AddTransient<IFileStorageService, AzureStorageService>();
@@ -81,6 +87,8 @@ namespace MoviesAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {

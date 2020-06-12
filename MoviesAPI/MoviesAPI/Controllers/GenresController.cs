@@ -12,6 +12,7 @@ using MoviesAPI.Filters;
 using Microsoft.EntityFrameworkCore;
 using MoviesAPI.DTOs;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 
 namespace MoviesAPI.Controllers
 {
@@ -33,7 +34,7 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [EnableCors(PolicyName = "AllowAPIRequestIO")]
         public async Task<ActionResult<List<GenreDTO>>> Get()
         {
             // return await _genreRepo.GetAllGenres();
